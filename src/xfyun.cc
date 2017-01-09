@@ -163,7 +163,7 @@ using v8::Value;
 void RunCallback(const FunctionCallbackInfo<Value>& args) {
   int			ret						=	MSP_SUCCESS;
 	const char* login_params			=	"appid = 5864ae2d, work_dir = ."; //登录参数,appid与msc库绑定,请勿随意改动
-  char*		grammar_id				=	"40a897e848a85a5f55c8fb774f4460bb";
+  char*		grammar_id				=	NULL;
   	/* 用户登录 */
 	ret = MSPLogin(NULL, NULL, login_params); //第一个参数是用户名，第二个参数是密码，均传NULL即可，第三个参数是登录参数
 	if (MSP_SUCCESS != ret)
@@ -179,7 +179,7 @@ void RunCallback(const FunctionCallbackInfo<Value>& args) {
 	*
 	* 详细参数说明请参阅《讯飞语音云MSC--API文档》
 	*/
-	const char*	session_begin_params	=	"sub = asr, result_type = plain, result_encoding = utf8";
+	const char*	session_begin_params	=	"sub = iat, result_type = plain, result_encoding = utf8";
   
   run_asr("wav/iflytek01.wav", session_begin_params, grammar_id); //iflytek01对应的音频内容：“18012345678”
 
