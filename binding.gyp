@@ -1,8 +1,8 @@
 {
     "targets": [
         {
-            "target_name": "xfyclient",
-            "sources": ["src/xfy_client.cc", "src/xfy_wrap.cc"],
+            "target_name": "xfyun",
+            "sources": ["src/xfyun.cc"],
             "libraries": ["-Wl,-rpath,./src/sdk/x64/libmsc.so"],
             "include_dirs": [
                 "<!(node -e \"require('nan')\")",
