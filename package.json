@@ -1,5 +1,5 @@
 {
-  "name": "xfyun-node",
+  "name": "xfy-node",
   "version": "1.0.0",
   "description": "xfy client based bindings and nan.",
   "main": "index.js",

@@ -2,7 +2,7 @@
 
 Nan::Persistent<v8::Function> XfyClient::constructor;
 
-XfyClient::XfyClient(double value) : value_(value) {
+XfyClient::XfyClient(char value) : value_(value) {
 }
 
 XfyClient::~XfyClient() {
@@ -20,6 +20,7 @@ void XfyClient::Init(v8::Local<v8::Object> exports) {
   Nan::SetPrototypeMethod(tpl, "value", GetValue);
   Nan::SetPrototypeMethod(tpl, "plusOne", PlusOne);
   Nan::SetPrototypeMethod(tpl, "multiply", Multiply);
+  Nan::SetPrototypeMethod(tpl, "login", Login);
 
   constructor.Reset(tpl->GetFunction());
   exports->Set(Nan::New("XfyClient").ToLocalChecked(), tpl->GetFunction());
@@ -42,6 +43,11 @@ void XfyClient::New(const Nan::FunctionCallbackInfo<v8::Value>& info) {
 }
 
 void XfyClient::GetValue(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  XfyClient* obj = ObjectWrap::Unwrap<XfyClient>(info.Holder());
+  info.GetReturnValue().Set(Nan::New(obj->value_));
+}
+
+void XfyClient::Login(const Nan::FunctionCallbackInfo<v8::Value>& info) {
   XfyClient* obj = ObjectWrap::Unwrap<XfyClient>(info.Holder());
   info.GetReturnValue().Set(Nan::New(obj->value_));
 }
