@@ -1,0 +1,33 @@
+{
+  "name": "xfyun-node",
+  "version": "1.0.0",
+  "description": "xfy client based bindings and nan.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "ava"
+  },
+  "gypfile": true,
+  "dependencies": {
+    "bindings": "~1.2.1",
+    "nan": "^2.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/snaplingo-org/xfy-node.git"
+  },
+  "keywords": [
+    "xfyun"
+  ],
+  "author": "hai liang wang <hailiang.hl.wang@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/snaplingo-org/xfy-node/issues"
+  },
+  "homepage": "https://github.com/snaplingo-org/xfy-node#readme",
+  "devDependencies": {
+    "ava": "^0.17.0"
+  }
+}
