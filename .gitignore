@@ -2,3 +2,6 @@ build
 node_modules/
 *.swo
 *.swp
+!src/sdk/bin/msc/msc.cfg
+src/sdk/bin/msc/
+/msc/

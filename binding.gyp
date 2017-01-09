@@ -3,10 +3,10 @@
         {
             "target_name": "xfyun",
             "sources": ["src/xfyun.cc"],
-            "libraries": ["-Wl,-rpath,./src/sdk/x64/libmsc.so"],
+            "libraries": ["/home/hain/git/xfy-node/src/sdk/libs/x64/libmsc.so"],
             "include_dirs": [
-                "<!(node -e \"require('nan')\")",
-                "./src/sdk/include"
+                "./src/sdk/include",
+                "<!(node -e \"require('nan')\")"
             ],
             "cflags": ["-g", "-Wall", "-Isrc/sdk/include"]
         }
