@@ -34,10 +34,16 @@ npm install xfy-node --save
         audio_file: 'wav/iflytek01.wav'
     }
 
-    xfyclient.iat(params, function (result) {
-        console.log(result);
-    })
+    xfyclient.iat(params)
+        .then(function (result) {
+            console.log('result', result);
+        }, function(err){
+            console.log('err', err);
+        });
 ```
+
+## Tutorial
+https://github.com/Samurais/xfy-node-getstarted
 
 ## Contribution
 ```
@@ -50,3 +56,9 @@ ava # test
 ```
 git clone https://github.com/Samurais/xfyun-get-started
 ```
+
+## 资源链接
+[语音识别科普](http://bbs.xfyun.cn/forum.php?mod=viewthread&tid=6911)
+[服务介绍](http://www.xfyun.cn/doccenter/asr)
+[开发者论坛](http://bbs.xfyun.cn/portal.php)
+[识别英语](http://bbs.xfyun.cn/forum.php?mod=viewthread&tid=22602&extra=page%3D1)

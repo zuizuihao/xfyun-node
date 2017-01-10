@@ -1,7 +1,7 @@
 {
   "name": "xfy-node",
-  "version": "1.0.2",
-  "description": "xfy client based bindings and nan.",
+  "version": "1.0.4",
+  "description": "xfyun nodejs client.",
   "main": "index.js",
   "directories": {
     "test": "test"
@@ -16,17 +16,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/snaplingo-org/xfy-node.git"
+    "url": "git+ssh://git@github.com:Samurais/xfy-node.git"
   },
   "keywords": [
-    "xfyun"
+    "xfyun", "科大讯飞", "语音识别", "讯飞云"
   ],
   "author": "hai liang wang <hailiang.hl.wang@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/snaplingo-org/xfy-node/issues"
+    "url": "https://github.com/Samurais/xfy-node/issues"
   },
-  "homepage": "https://github.com/snaplingo-org/xfy-node#readme",
+  "homepage": "https://github.com/Samurais/xfy-node#readme",
   "devDependencies": {
     "ava": "^0.17.0"
   }
