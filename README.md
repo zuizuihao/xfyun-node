@@ -3,9 +3,10 @@
 * 目前仅支持 linux64.
 
 ```
+# download xfyun sdks from official portal, a zip file like here.
+sudo unzip Linux_voice_1135_5864ae2d.zip -d /opt/xfy-sdk
 cd PROJECT_ROOT
 npm install xfy-node --save
-ln -s `pwd`/node_modules/xfy-node/src/sdk /opt/xfy-sdk # 因为没有解决依赖库的相对路径问题，用一个软链接
 ```
 
 ## Usage
@@ -15,7 +16,6 @@ ln -s `pwd`/node_modules/xfy-node/src/sdk /opt/xfy-sdk # 因为没有解决依�
         username: null, // 账号名称
         password: null, // 账号密码 
         appid: '5864ae2d', // AppID
-        work_dir: '.', // 工作目录，用来寻找语音文件
         // 语言
         // zh_cn:简体中文
         // zh_tw:繁体中文
@@ -30,7 +30,7 @@ ln -s `pwd`/node_modules/xfy-node/src/sdk /opt/xfy-sdk # 因为没有解决依�
         // 音频格式
         // 8000, 16000, 默认为16000
         sample_rate: 16000,
-        // 音频文件位置，相对于work_dir
+        // 音频文件位置，绝对路径
         audio_file: 'wav/iflytek01.wav'
     }
 
