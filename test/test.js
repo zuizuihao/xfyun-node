@@ -19,11 +19,15 @@ test.cb('xfy-node#test', t => {
         audio_file: 'src/sdk/bin/wav/iflytek01.wav'
     }
 
-    xfyclient.iat(params, function (result) {
-        console.log('识别结果：', result);
-        // t.is(result, '18012345678。', 'Record Message to Text.');
-        t.pass();
-        t.end();
-    })
+    xfyclient.iat(params)
+        .then(function (result) {
+            console.log('识别结果：', result);
+            // t.is(result, '18012345678。', 'Record Message to Text.');
+            t.pass();
+            t.end();
+        }, function (err) {
+            t.fail(err);
+            t.end();
+        });
 });
 

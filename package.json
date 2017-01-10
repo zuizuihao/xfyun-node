@@ -1,6 +1,6 @@
 {
   "name": "xfy-node",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "xfy client based bindings and nan.",
   "main": "index.js",
   "directories": {
