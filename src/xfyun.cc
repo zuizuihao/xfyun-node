@@ -109,7 +109,7 @@ void Iat(const Nan::FunctionCallbackInfo<v8::Value> &info)
     rec_error = "read audio file error.";
   }
 
-  printf("\n开始语音听写 ...\n");
+  printf("(xfyun.cc)>>>>Start iat request ...\n");
   session_id = QISRSessionBegin(NULL, (const char *)(*session_params), &errcode); //听写不需要语法，第一个参数为NULL
   if (MSP_SUCCESS != errcode)
   {
@@ -131,7 +131,6 @@ void Iat(const Nan::FunctionCallbackInfo<v8::Value> &info)
     if (0 == pcm_count)
       aud_stat = MSP_AUDIO_SAMPLE_FIRST;
 
-    printf(">");
     ret = QISRAudioWrite(session_id, (const void *)&p_pcm[pcm_count], len, aud_stat, &ep_stat, &rec_stat);
     if (MSP_SUCCESS != ret)
     {
@@ -167,6 +166,7 @@ void Iat(const Nan::FunctionCallbackInfo<v8::Value> &info)
       break;
     // usleep(200 * 1000); //模拟人说话时间间隙。200ms对应10帧的音频
   }
+
   errcode = QISRAudioWrite(session_id, NULL, 0, MSP_AUDIO_SAMPLE_LAST, &ep_stat, &rec_stat);
   if (MSP_SUCCESS != errcode)
   {
@@ -191,19 +191,11 @@ void Iat(const Nan::FunctionCallbackInfo<v8::Value> &info)
       }
       strncat(rec_result, rslt, rslt_len);
     }
-    usleep(150 * 1000); //防止频繁占用CPU
+    // usleep(150 * 1000); //防止频繁占用CPU
   }
 
-  /**
-   * return callback
-   */
-  Isolate *isolate = info.GetIsolate();
-  // callback fn
-  Local<Function> cb = Local<Function>::Cast(info[5]);
-  const unsigned argc = 2;
-
-  Local<Value> argv[argc] = {String::NewFromUtf8(isolate, rec_error), String::NewFromUtf8(isolate, rec_result)};
-  cb->Call(Null(isolate), argc, argv);
+  printf("(xfyun.cc)>>>>Result:\n");
+	printf("(xfyun.cc)>>>>%s\n",rec_result);
 
   if (NULL != f_pcm)
   {
@@ -217,7 +209,22 @@ void Iat(const Nan::FunctionCallbackInfo<v8::Value> &info)
     p_pcm = NULL;
   }
 
+  // end session
   QISRSessionEnd(session_id, hints);
+  printf("(xfyun.cc)>>>>End iat session by id %d.\n", session_id);
+
+  /**
+   * return callback
+   */
+  Isolate *isolate = info.GetIsolate();
+  // callback fn
+  Local<Function> cb = Local<Function>::Cast(info[5]);
+  const unsigned argc = 2;
+
+  Local<Value> argv[argc] = {String::NewFromUtf8(isolate, rec_error), String::NewFromUtf8(isolate, rec_result)};
+  cb->Call(Null(isolate), argc, argv);
+
+
 }
 
 void Init(Local<Object> exports, Local<Object> module)
