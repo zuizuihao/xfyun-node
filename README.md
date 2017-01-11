@@ -73,5 +73,7 @@ git clone https://github.com/Samurais/xfyun-get-started
 # Copyright & License
 
 Code & Docs 2017© Hai Liang Wang hailiang.hl.wang@gmail.com
+
 Code released under the ISC license
+
 Docs released under Creative Commons
