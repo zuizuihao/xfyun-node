@@ -1,11 +1,15 @@
 # xfyun-node
 [科大讯飞](http://www.xfyun.cn/)没有提供Node.js SDK，于是就有了这个轮子。
-* 目前仅支持 linux64.
+* 目前仅支持 linux64，目前仅支持科大讯飞听写接口。
 
 ```
 # download xfyun sdks from official portal, a zip file like here.
 sudo unzip Linux_voice_1135_5864ae2d.zip -d /opt/xfy-sdk
 cd PROJECT_ROOT
+```
+
+* Install
+```
 npm install xfy-node --save
 ```
 
@@ -59,6 +63,15 @@ git clone https://github.com/Samurais/xfyun-get-started
 
 ## 资源链接
 [语音识别科普](http://bbs.xfyun.cn/forum.php?mod=viewthread&tid=6911)
+
 [服务介绍](http://www.xfyun.cn/doccenter/asr)
+
 [开发者论坛](http://bbs.xfyun.cn/portal.php)
+
 [识别英语](http://bbs.xfyun.cn/forum.php?mod=viewthread&tid=22602&extra=page%3D1)
+
+# Copyright & License
+
+Code & Docs 2017© Hai Liang Wang hailiang.hl.wang@gmail.com
+Code released under the ISC license
+Docs released under Creative Commons
