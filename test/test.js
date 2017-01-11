@@ -2,21 +2,32 @@
  * Test 
  */
 const test = require('ava');
+const xfyclient = require('../');
 
 test.cb('xfy-node#test', t => {
-    var xfyclient = require('bindings')('xfyclient');
-    var obj = new xfyclient.XfyClient(10);
-    console.log(obj.plusOne()); // 11
-    console.log(obj.plusOne()); // 12
-    console.log(obj.plusOne()); // 13
-    
-    console.log(obj.multiply().value()); // 13
-    console.log(obj.multiply(10).value()); // 130
 
-    var newobj = obj.multiply(-1);
-    console.log(newobj.value()); // -13
-    console.log(obj === newobj); // false
-    t.pass();
-    t.end();
+    let wav_file = '32197e88c543c9ea7c1b6c45b550b462_16.wav';
+
+    let params = {
+        username: null,
+        password: null,
+        appid: '5864ae2d',
+        lang: 'zh_cn',
+        accent: 'mandarin',
+        sample_rate: 16000,
+        // audio_file: `/home/hain/data.vioces/${wav_file}`
+        audio_file: 'src/sdk/bin/wav/iflytek01.wav'
+    }
+
+    xfyclient.iat(params)
+        .then(function (result) {
+            console.log('识别结果：', result);
+            // t.is(result, '18012345678。', 'Record Message to Text.');
+            t.pass();
+            t.end();
+        }, function (err) {
+            t.fail(err);
+            t.end();
+        });
 });
 

@@ -1,12 +1,12 @@
 {
     "targets": [
         {
-            "target_name": "xfyclient",
-            "sources": ["src/xfy_client.cc", "src/xfy_wrap.cc"],
-            "libraries": ["-Wl,-rpath, src/sdk/x64/libmsc.so"],
+            "target_name": "xfyun",
+            "sources": ["src/xfyun.cc"],
+            "libraries": ["/opt/xfy-sdk/libs/x64/libmsc.so"],
             "include_dirs": [
-                "<!(node -e \"require('nan')\")",
-                "./src/sdk/include"
+                "./src/sdk/include",
+                "<!(node -e \"require('nan')\")"
             ],
             "cflags": ["-g", "-Wall", "-Isrc/sdk/include"]
         }
