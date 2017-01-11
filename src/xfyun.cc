@@ -61,6 +61,11 @@ void Iat(const Nan::FunctionCallbackInfo<v8::Value> &info)
     printf("MSPLogin failed, error code: %d.\n", ret);
     Nan::ThrowError("MSPLogin failed. Check out error code in consolelog.");
   }
+  else
+  {
+    printf("MSPLogin succ.\n");
+  }
+
   // else logined succ.
   // char rec_result = run_iat((const char *)(*audio_file), (const char *)(*session_params));
 
@@ -109,7 +114,7 @@ void Iat(const Nan::FunctionCallbackInfo<v8::Value> &info)
     rec_error = "read audio file error.";
   }
 
-  printf("(xfyun.cc)>>>>Start iat request ...\n");
+  printf("(xfyun.cc)>>>>Start iat session ...\n");
   session_id = QISRSessionBegin(NULL, (const char *)(*session_params), &errcode); //听写不需要语法，第一个参数为NULL
   if (MSP_SUCCESS != errcode)
   {
@@ -117,37 +122,70 @@ void Iat(const Nan::FunctionCallbackInfo<v8::Value> &info)
     rec_error = "QISRSessionBegin failed! error code";
   }
 
-  while (1)
+  if ("" == rec_error)
   {
-    unsigned int len = 10 * FRAME_LEN; // 每次写入200ms音频(16k，16bit)：1帧音频20ms，10帧=200ms。16k采样率的16位音频，一帧的大小为640Byte
-    int ret = 0;
-
-    if (pcm_size < 2 * len)
-      len = pcm_size;
-    if (len <= 0)
-      break;
-
-    aud_stat = MSP_AUDIO_SAMPLE_CONTINUE;
-    if (0 == pcm_count)
-      aud_stat = MSP_AUDIO_SAMPLE_FIRST;
-
-    ret = QISRAudioWrite(session_id, (const void *)&p_pcm[pcm_count], len, aud_stat, &ep_stat, &rec_stat);
-    if (MSP_SUCCESS != ret)
+    while (1)
     {
-      printf("\nQISRAudioWrite failed! error code:%d\n", ret);
-      rec_error = "QISRAudioWrite failed! error code";
+      unsigned int len = 10 * FRAME_LEN; // 每次写入200ms音频(16k，16bit)：1帧音频20ms，10帧=200ms。16k采样率的16位音频，一帧的大小为640Byte
+      int ret = 0;
+
+      if (pcm_size < 2 * len)
+        len = pcm_size;
+      if (len <= 0)
+        break;
+
+      aud_stat = MSP_AUDIO_SAMPLE_CONTINUE;
+      if (0 == pcm_count)
+        aud_stat = MSP_AUDIO_SAMPLE_FIRST;
+
+      ret = QISRAudioWrite(session_id, (const void *)&p_pcm[pcm_count], len, aud_stat, &ep_stat, &rec_stat);
+      if (MSP_SUCCESS != ret)
+      {
+        printf("\nQISRAudioWrite failed! error code:%d\n", ret);
+        rec_error = "QISRAudioWrite failed! error code";
+      }
+
+      pcm_count += (long)len;
+      pcm_size -= (long)len;
+
+      if (MSP_REC_STATUS_SUCCESS == rec_stat) //已经有部分听写结果
+      {
+        const char *rslt = QISRGetResult(session_id, &rec_stat, 0, &errcode);
+        if (MSP_SUCCESS != errcode)
+        {
+          printf("\nQISRGetResult failed! error code: %d\n", errcode);
+          rec_error = "QISRGetResult failed! error code";
+        }
+        if (NULL != rslt)
+        {
+          unsigned int rslt_len = strlen(rslt);
+          total_len += rslt_len;
+          if (total_len >= BUFFER_SIZE)
+          {
+            printf("\nno enough buffer for rec_result !\n");
+            rec_error = "no enough buffer for rec_result !";
+          }
+          strncat(rec_result, rslt, rslt_len);
+        }
+      }
+
+      if (MSP_EP_AFTER_SPEECH == ep_stat)
+        break;
+      // usleep(200 * 1000); //模拟人说话时间间隙。200ms对应10帧的音频
     }
 
-    pcm_count += (long)len;
-    pcm_size -= (long)len;
+    errcode = QISRAudioWrite(session_id, NULL, 0, MSP_AUDIO_SAMPLE_LAST, &ep_stat, &rec_stat);
+    if (MSP_SUCCESS != errcode)
+    {
+      printf("\nQISRAudioWrite failed! error code:%d \n", errcode);
+    }
 
-    if (MSP_REC_STATUS_SUCCESS == rec_stat) //已经有部分听写结果
+    while (MSP_REC_STATUS_COMPLETE != rec_stat)
     {
       const char *rslt = QISRGetResult(session_id, &rec_stat, 0, &errcode);
       if (MSP_SUCCESS != errcode)
       {
-        printf("\nQISRGetResult failed! error code: %d\n", errcode);
-        rec_error = "QISRGetResult failed! error code";
+        printf("\nQISRGetResult failed, error code: %d\n", errcode);
       }
       if (NULL != rslt)
       {
@@ -156,46 +194,29 @@ void Iat(const Nan::FunctionCallbackInfo<v8::Value> &info)
         if (total_len >= BUFFER_SIZE)
         {
           printf("\nno enough buffer for rec_result !\n");
-          rec_error = "no enough buffer for rec_result !";
+          rec_error = "enough buffer for rec_result";
         }
         strncat(rec_result, rslt, rslt_len);
       }
+      // usleep(150 * 1000); //防止频繁占用CPU
     }
 
-    if (MSP_EP_AFTER_SPEECH == ep_stat)
-      break;
-    // usleep(200 * 1000); //模拟人说话时间间隙。200ms对应10帧的音频
+    // end session
+    QISRSessionEnd(session_id, hints);
+    printf("(xfyun.cc)>>>>End iat session by id %d.\n", session_id);
+    printf("(xfyun.cc)>>>>Result:\n");
+    printf("(xfyun.cc)>>>>%s\n", rec_result);
   }
-
-  errcode = QISRAudioWrite(session_id, NULL, 0, MSP_AUDIO_SAMPLE_LAST, &ep_stat, &rec_stat);
-  if (MSP_SUCCESS != errcode)
+  else
   {
-    printf("\nQISRAudioWrite failed! error code:%d \n", errcode);
+    printf("(xfyun.cc)>>>>Can not start Session: %s", rec_error);
   }
 
-  while (MSP_REC_STATUS_COMPLETE != rec_stat)
+  ret = MSPLogout();
+  if (MSP_SUCCESS != ret)
   {
-    const char *rslt = QISRGetResult(session_id, &rec_stat, 0, &errcode);
-    if (MSP_SUCCESS != errcode)
-    {
-      printf("\nQISRGetResult failed, error code: %d\n", errcode);
-    }
-    if (NULL != rslt)
-    {
-      unsigned int rslt_len = strlen(rslt);
-      total_len += rslt_len;
-      if (total_len >= BUFFER_SIZE)
-      {
-        printf("\nno enough buffer for rec_result !\n");
-        rec_error = "enough buffer for rec_result";
-      }
-      strncat(rec_result, rslt, rslt_len);
-    }
-    // usleep(150 * 1000); //防止频繁占用CPU
+    printf("(xfyun.cc)>>>>MSPLogout failed, error code is: %d", ret);
   }
-
-  printf("(xfyun.cc)>>>>Result:\n");
-	printf("(xfyun.cc)>>>>%s\n",rec_result);
 
   if (NULL != f_pcm)
   {
@@ -209,10 +230,6 @@ void Iat(const Nan::FunctionCallbackInfo<v8::Value> &info)
     p_pcm = NULL;
   }
 
-  // end session
-  QISRSessionEnd(session_id, hints);
-  printf("(xfyun.cc)>>>>End iat session by id %d.\n", session_id);
-
   /**
    * return callback
    */
@@ -223,8 +240,6 @@ void Iat(const Nan::FunctionCallbackInfo<v8::Value> &info)
 
   Local<Value> argv[argc] = {String::NewFromUtf8(isolate, rec_error), String::NewFromUtf8(isolate, rec_result)};
   cb->Call(Null(isolate), argc, argv);
-
-
 }
 
 void Init(Local<Object> exports, Local<Object> module)
